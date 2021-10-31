@@ -18,7 +18,38 @@ async function run () {
         await client.connect();
         const database = client.db('travelLovers');
         const serviceCollection = database.collection('Services');
+        const blogsCollection = database.collection('blogs')
 
+        app.get('/services', async (req, res) => {
+            const cursor = serviceCollection.find({});
+            const page = req.query.page;
+            const size = parseInt(req.query.size);
+            let products;
+
+            if(page){
+                products = await cursor.skip(page*size).limit(size).toArray();
+            }
+            else{
+                products = await cursor.toArray();
+            }
+            res.send(products);
+        });
+
+        //Add BLogs API
+        app.get('/blogs', async (req, res) => {
+            const cursor = blogsCollection.find({});
+            const page = req.query.page;
+            const size = parseInt(req.query.size);
+            let products;
+
+            if(page){
+                products = await cursor.skip(page*size).limit(size).toArray();
+            }
+            else{
+                products = await cursor.toArray();
+            }
+            res.send(products);
+        })
 
     }
     finally{
