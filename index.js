@@ -35,6 +35,13 @@ async function run () {
             res.send(products);
         });
 
+        app.get('/details/:serviceId', async (req, res) => {
+            const serviceId = req.params.serviceId;
+            const query = { _id: ObjectId(serviceId) };
+            const user = await serviceCollection.findOne(query);
+            res.json(user)
+        });
+
         //Add BLogs API
         app.get('/blogs', async (req, res) => {
             const cursor = blogsCollection.find({});
