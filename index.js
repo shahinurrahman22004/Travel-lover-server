@@ -26,20 +26,20 @@ async function run () {
             const cursor = serviceCollection.find({});
             const page = req.query.page;
             const size = parseInt(req.query.size);
-            let products;
+            let services;
 
             if(page){
-                products = await cursor.skip(page*size).limit(size).toArray();
+                services = await cursor.skip(page*size).limit(size).toArray();
             }
             else{
-                products = await cursor.toArray();
+                services = await cursor.toArray();
             }
-            res.send(products);
+            res.send(services);
         });
 
         app.post('/services', async (req, res) => {
-            const product = req.body;
-            const result = await serviceCollection.insertOne(product);
+            const service = req.body;
+            const result = await serviceCollection.insertOne(service);
             res.json(result)
         });
 
@@ -64,14 +64,7 @@ async function run () {
 
         app.put('/orders', async (req, res) => {
             const orderCan = req.query.can;
-            const orderShip = req.query.ship;
             const id = req.query.id;
-            if (orderShip) {                
-                const filter = { _id: ObjectId(id) };
-                const updateDoc = { $set: { shipped: 'Shipped' } };
-                const result = await odersCollection.updateOne(filter, updateDoc);
-                res.json(result);                
-            }
             if (orderCan) {                
                 const filter = { _id: ObjectId(id) };
                 const updateDoc = { $set: { shipped: 'Canceled' } };
@@ -84,24 +77,24 @@ async function run () {
         app.get('/service/:serviceId', async (req, res) => {
             const serviceId = req.params.serviceId;
             const query = { _id: ObjectId(serviceId) };
-            const user = await serviceCollection.findOne(query);
-            res.json(user)
+            const service = await serviceCollection.findOne(query);
+            res.json(service)
         });
 
-        //Add BLogs API
+        //Get Blogs API
         app.get('/blogs', async (req, res) => {
             const cursor = blogsCollection.find({});
             const page = req.query.page;
             const size = parseInt(req.query.size);
-            let products;
+            let blog;
 
             if(page){
-                products = await cursor.skip(page*size).limit(size).toArray();
+                blog = await cursor.skip(page*size).limit(size).toArray();
             }
             else{
-                products = await cursor.toArray();
+                blog = await cursor.toArray();
             }
-            res.send(products);
+            res.send(blog);
         })
 
     }
