@@ -20,6 +20,7 @@ async function run () {
         const database = client.db('travelLovers');
         const serviceCollection = database.collection('Services');
         const blogsCollection = database.collection('blogs')
+        const odersCollection = database.collection('orders');
 
         app.get('/services', async (req, res) => {
             const cursor = serviceCollection.find({});
@@ -34,6 +35,44 @@ async function run () {
                 products = await cursor.toArray();
             }
             res.send(products);
+        });
+
+        app.post('/order', async (req, res) => {
+            const order = req.body;
+            const result = await odersCollection.insertOne(order);
+            res.json(result);
+        });
+
+        app.get('/orders', async (req, res) => {
+            const email = req.query.email;
+            let cursor = '';
+            if(email){
+                const query = { email: email }
+                cursor = odersCollection.find(query);
+            }else{
+                cursor = odersCollection.find({});
+            }
+            const orders = await cursor.toArray();
+            res.json(orders);
+        });
+
+        app.put('/orders', async (req, res) => {
+            const orderCan = req.query.can;
+            const orderShip = req.query.ship;
+            const id = req.query.id;
+            if (orderShip) {                
+                const filter = { _id: ObjectId(id) };
+                const updateDoc = { $set: { shipped: 'Shipped' } };
+                const result = await odersCollection.updateOne(filter, updateDoc);
+                res.json(result);                
+            }
+            if (orderCan) {                
+                const filter = { _id: ObjectId(id) };
+                const updateDoc = { $set: { shipped: 'Canceled' } };
+                const result = await odersCollection.updateOne(filter, updateDoc);
+                res.json(result);                
+            }
+
         });
 
         app.get('/service/:serviceId', async (req, res) => {
