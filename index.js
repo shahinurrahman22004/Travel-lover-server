@@ -37,6 +37,12 @@ async function run () {
             res.send(products);
         });
 
+        app.post('/services', async (req, res) => {
+            const product = req.body;
+            const result = await serviceCollection.insertOne(product);
+            res.json(result)
+        });
+
         app.post('/order', async (req, res) => {
             const order = req.body;
             const result = await odersCollection.insertOne(order);
@@ -70,7 +76,7 @@ async function run () {
                 const filter = { _id: ObjectId(id) };
                 const updateDoc = { $set: { shipped: 'Canceled' } };
                 const result = await odersCollection.updateOne(filter, updateDoc);
-                res.json(result);                
+                res.json(result);
             }
 
         });
